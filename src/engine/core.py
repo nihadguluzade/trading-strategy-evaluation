@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 from datetime import datetime
 import yfinance as yf
+import time
 
 from src.strategies.base import BaseStrategy
 from src.strategies.classic import (
@@ -210,6 +211,8 @@ def run_backtest(
 
     # TODO: add validation for invalid parameters -- return meaningful error
 
+    _t0 = time.perf_counter()
+
     # Run chosen strategy
     strategy: BaseStrategy = STRATEGY_MAP[strategy_name](**parameters)
     result = strategy.execute(df)
@@ -228,6 +231,8 @@ def run_backtest(
     final_value = initial_capital * (1 + result["Strategy_Returns"]).prod()
     kpis["finalPortfolioValue"] = round(final_value, 2)
 
+    execution_time_ms = round((time.perf_counter() - _t0) * 1000, 1)
+
     return {
         "meta": {
             "strategy": strategy_name,
@@ -236,6 +241,7 @@ def run_backtest(
             "end_date": str(df.index[-1].date()) if len(df) > 0 else str(end_date),
             "data_source": "yfinance",
             "initial_capital": initial_capital,
+            "executionTimeMs": execution_time_ms,
         },
         "metrics": kpis,
         "charts": {

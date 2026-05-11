@@ -284,6 +284,9 @@ if _last_result is not None:
     for k, v in _p.items():
         _label = k.replace("_", " ").title()
         _pills.append(_pill(_label, ("{:g}".format(v)) if isinstance(v, float) else str(v)))
+    _exec_ms = meta.get("executionTimeMs")
+    if _exec_ms is not None:
+        _pills.append(_pill("Exec", f"{_exec_ms:g} ms"))
     status_text = " ".join(_pills)
 else:
     status_text = "No backtest run yet — configure below and click Run"
@@ -305,16 +308,16 @@ with top_left:
 
 with top_right:
     btn_col1, btn_col2 = st.columns([1, 1])
-    with btn_col1:
-        # Dummy Export button — functionality to be wired up when backend is ready
-        st.markdown(
-            """<div style="display:flex;justify-content:flex-end;padding-top:12px">
-              <button class="top-btn export" disabled title="Export (coming soon)">
-                ↓ Export
-              </button>
-            </div>""",
-            unsafe_allow_html=True,
-        )
+    # with btn_col1:
+    #     # Dummy Export button — functionality to be wired up when backend is ready
+    #     st.markdown(
+    #         """<div style="display:flex;justify-content:flex-end;padding-top:12px">
+    #           <button class="top-btn export" disabled title="Export (coming soon)">
+    #             ↓ Export
+    #           </button>
+    #         </div>""",
+    #         unsafe_allow_html=True,
+    #     )
     with btn_col2:
         st.markdown("<div style='padding-top:6px'>", unsafe_allow_html=True)
         if st.button(theme_label, key="theme_toggle"):
@@ -386,6 +389,7 @@ if st.button("▶  RUN BACKTEST"):
             "end_date": backend_meta.get("end_date", str(ed)),
             "capital": capital,
             "params": dict(params),
+            "executionTimeMs": backend_meta.get("executionTimeMs"),
         }
         st.rerun()
 

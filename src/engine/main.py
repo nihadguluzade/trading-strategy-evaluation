@@ -60,8 +60,6 @@ def run_strategy(request: StrategyRequest):
             end_date=request.end_date,
             initial_capital=request.initial_capital,
         )
-        # TODO measure execution
-        # TODO add execution in response header
         return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
