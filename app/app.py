@@ -40,45 +40,78 @@ CSS_VARS = DARK_VARS if dark else LIGHT_VARS
 
 st.markdown(
     f"""<style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=Syne:wght@400;600;700;800&display=swap');
-:root{{{CSS_VARS}}}
-html,body,[data-testid="stAppViewContainer"]{{background-color:var(--bg)!important;color:var(--text)!important;font-family:'Syne',sans-serif!important}}
+:root{{{CSS_VARS}--font-ui:'Geist','Segoe UI',system-ui,sans-serif;--font-mono:'Geist','Segoe UI',system-ui,sans-serif;--font-display:'Geist','Segoe UI',system-ui,sans-serif;}}
+*{{font-family:var(--font-ui)!important}}
+html,body,[data-testid="stAppViewContainer"]{{background-color:var(--bg)!important;color:var(--text)!important}}
 [data-testid="stAppViewContainer"]>.main,[data-testid="stHeader"]{{background-color:var(--bg)!important}}
 section[data-testid="stSidebar"]{{display:none!important}}
 [data-testid="collapsedControl"]{{display:none!important}}
-.logo{{font-family:'Instrument Serif',serif;font-size:22px;color:var(--text);display:flex;align-items:center;gap:8px}}
-.logo-badge{{background:var(--accent);color:#000;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border-radius:3px;text-transform:uppercase}}
-.topbar{{display:flex;align-items:center;justify-content:space-between;padding:10px 0 18px;border-bottom:1px solid var(--border);margin-bottom:24px}}
-.run-status{{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}}
-.pulse{{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;animation:pulse 2s ease-in-out infinite}}
+/* Hide the Streamlit deploy toolbar — it disappears in production automatically */
+[data-testid="stToolbar"],[data-testid="stDecoration"],[data-testid="stStatusWidget"]{{display:none!important}}
+header[data-testid="stHeader"]{{display:none!important}}
+
+/* ── TOPBAR */
+.topbar{{display:flex;align-items:center;justify-content:space-between;padding:12px 0 20px;border-bottom:1px solid var(--border);margin-bottom:24px;gap:12px}}
+.topbar-left{{display:flex;align-items:center;gap:16px;flex:1;min-width:0}}
+.logo-badge{{background:var(--accent);color:#000;font-family:var(--font-ui)!important;font-size:9px;padding:2px 7px;border-radius:3px;text-transform:uppercase;font-weight:700;letter-spacing:.08em;flex-shrink:0}}
+.run-status{{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--muted)}}
+.pulse{{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;flex-shrink:0;animation:pulse 2s ease-in-out infinite}}
 @keyframes pulse{{0%,100%{{opacity:1;transform:scale(1)}}50%{{opacity:.4;transform:scale(.8)}}}}
-.page-title{{font-family:'Instrument Serif',serif;font-size:30px;letter-spacing:-.5px;line-height:1.1}}
+.topbar-right{{display:flex;align-items:center;gap:8px;flex-shrink:0}}
+
+/* ── TOP ACTION BUTTONS (Export + Theme) */
+.top-btn{{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:500;
+  padding:6px 14px;border-radius:6px;cursor:pointer;
+  border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);
+  transition:background .15s,color .15s,border-color .15s;
+  white-space:nowrap;text-decoration:none;
+}}
+.top-btn:hover{{background:var(--surface2);color:var(--text);border-color:var(--muted)}}
+.top-btn.export{{border-color:var(--border);color:var(--muted)}}
+
+/* ── PAGE TITLE */
+.page-title{{font-family:var(--font-display)!important;font-size:30px;letter-spacing:-.5px;line-height:1.1}}
 .page-title em{{color:var(--accent);font-style:italic}}
-.page-subtitle{{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px}}
+.page-subtitle{{font-size:11px;color:var(--muted);margin-top:6px}}
+
+/* ── STAT CARDS */
 .stat-card{{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--card-shadow)}}
 .stat-card::before{{content:'';position:absolute;top:0;left:0;right:0;height:2px}}
 .stat-card.green::before{{background:var(--accent)}}.stat-card.blue::before{{background:var(--accent2)}}
 .stat-card.yellow::before{{background:var(--accent3)}}.stat-card.red::before{{background:var(--danger)}}.stat-card.grey::before{{background:var(--muted)}}
-.stat-label{{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}}
-.stat-value{{font-family:'Instrument Serif',serif;font-size:28px;letter-spacing:-1px;line-height:1}}
+.stat-label{{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}}
+.stat-value{{font-family:var(--font-display)!important;font-size:28px;letter-spacing:-1px;line-height:1}}
 .stat-value.pos{{color:var(--accent)}}.stat-value.neg{{color:var(--danger)}}.stat-value.blue{{color:var(--accent2)}}
-.stat-delta{{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:6px}}.stat-delta span{{color:var(--accent)}}
+.stat-delta{{font-size:10px;color:var(--muted);margin-top:6px}}.stat-delta span{{color:var(--accent)}}
+
+/* ── DASH CARDS */
 .dash-card{{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--card-shadow)}}
 .card-header{{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border)}}
 .card-title{{font-size:13px;font-weight:700;letter-spacing:.02em;display:flex;align-items:center;gap:8px}}
 .dot{{width:6px;height:6px;border-radius:50%;display:inline-block}}.card-body{{padding:18px 20px}}
+
+/* ── TRADE TABLE */
 .trade-table{{width:100%;border-collapse:collapse}}
-.trade-table thead th{{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--border)}}
+.trade-table thead th{{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 12px 10px;border-bottom:1px solid var(--border)}}
+.trade-table thead th:first-child{{padding-left:4px}}
+.trade-table thead th.num{{text-align:right}}
 .trade-table tbody tr{{border-bottom:1px solid var(--border)}}.trade-table tbody tr:last-child{{border-bottom:none}}
-.trade-table tbody td{{padding:10px 0;font-family:'DM Mono',monospace;font-size:11px;color:var(--text)}}
+.trade-table tbody td{{padding:10px 12px;font-size:11px;color:var(--text)}}
+.trade-table tbody td:first-child{{padding-left:4px}}
+.trade-table tbody td.num{{text-align:right}}
 .tag{{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em}}
 .tag-long{{background:rgba(0,229,160,.15);color:var(--accent)}}.tag-short{{background:rgba(255,79,106,.15);color:var(--danger)}}
 .pos-val{{color:var(--accent)}}.neg-val{{color:var(--danger)}}
-.error-box{{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:16px;color:var(--danger);font-family:'DM Mono',monospace;font-size:12px;white-space:pre-wrap}}
+.error-box{{background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:16px;color:var(--danger);font-size:12px;white-space:pre-wrap}}
+
+/* ── STREAMLIT INPUT OVERRIDES */
 [data-testid="stSlider"]>div>div>div{{background:var(--accent)!important}}[data-testid="stSlider"]>div>div{{background:var(--surface2)!important}}
-.stSelectbox>div>div,.stTextInput>div>div>input,.stNumberInput>div>div>input{{background:var(--surface2)!important;border:1px solid var(--border)!important;color:var(--input-text)!important;font-family:'DM Mono',monospace!important}}
-[data-testid="stDateInput"] input,[data-testid="stDateInput"]>div,[data-testid="stDateInput"]>div>div,.stDateInput>div,.stDateInput>div>div,.stDateInput>div>div>div,[data-baseweb="input"],[data-baseweb="base-input"]{{background:var(--surface2)!important;color:var(--input-text)!important;border-color:var(--border)!important;font-family:'DM Mono',monospace!important}}
-[data-testid="stNumberInputContainer"],[data-testid="stNumberInputContainer"]>div,[data-testid="stNumberInputContainer"] input{{background:var(--surface2)!important;color:var(--input-text)!important;border-color:var(--border)!important;font-family:'DM Mono',monospace!important}}
+.stSelectbox>div>div,.stTextInput>div>div>input,.stNumberInput>div>div>input{{background:var(--surface2)!important;border:1px solid var(--border)!important;color:var(--input-text)!important}}
+[data-testid="stDateInput"] input,[data-testid="stDateInput"]>div,[data-testid="stDateInput"]>div>div,.stDateInput>div,.stDateInput>div>div,.stDateInput>div>div>div,[data-baseweb="input"],[data-baseweb="base-input"]{{background:var(--surface2)!important;color:var(--input-text)!important;border-color:var(--border)!important}}
+[data-testid="stNumberInputContainer"],[data-testid="stNumberInputContainer"]>div,[data-testid="stNumberInputContainer"] input{{background:var(--surface2)!important;color:var(--input-text)!important;border-color:var(--border)!important}}
 [data-testid="stNumberInputContainer"] button{{background:var(--surface2)!important;color:var(--muted)!important;border-color:var(--border)!important}}
 [data-testid="stSelectbox"]>div>div,[data-testid="stSelectbox"] [data-baseweb="select"]>div{{background:var(--surface2)!important;color:var(--input-text)!important;border-color:var(--border)!important}}
 [data-baseweb="popover"] ul,[data-baseweb="menu"]{{background:var(--surface)!important;border:1px solid var(--border)!important}}
@@ -87,10 +120,28 @@ section[data-testid="stSidebar"]{{display:none!important}}
 [data-baseweb="calendar"]{{background:var(--surface)!important;color:var(--text)!important}}
 [data-baseweb="calendar"] button{{background:transparent!important;color:var(--text)!important}}
 [data-baseweb="calendar"] button:hover{{background:var(--surface2)!important}}
-label[data-testid="stWidgetLabel"] p{{font-family:'DM Mono',monospace!important;font-size:9px!important;text-transform:uppercase!important;color:var(--muted)!important}}
-.stButton>button{{width:100%;background:var(--accent)!important;border:none!important;border-radius:8px!important;font-family:'Syne',sans-serif!important;font-size:13px!important;font-weight:800!important;color:#000!important;text-transform:uppercase!important;padding:12px 0!important}}
+label[data-testid="stWidgetLabel"] p{{font-size:9px!important;text-transform:uppercase!important;color:var(--muted)!important;letter-spacing:.08em!important}}
+
+/* ── RUN BUTTON */
+.stButton>button{{
+  width:100%!important;
+  background:var(--accent)!important;
+  border:none!important;
+  border-radius:7px!important;
+  font-size:12px!important;
+  font-weight:700!important;
+  color:#000!important;
+  text-transform:uppercase!important;
+  letter-spacing:.08em!important;
+  padding:10px 20px!important;
+  transition:opacity .12s,transform .1s,box-shadow .12s!important;
+  box-shadow:0 2px 8px rgba(0,0,0,0.10)!important;
+}}
+.stButton>button:hover{{opacity:.88!important;box-shadow:0 4px 16px rgba(0,0,0,0.15)!important}}
+.stButton>button:active{{opacity:1!important;transform:scale(0.97) translateY(1px)!important;box-shadow:0 1px 3px rgba(0,0,0,0.10)!important}}
+
+/* ── LAYOUT */
 .block-container{{padding:1.5rem 2rem 2rem!important;max-width:100%!important}}.stMarkdown p{{margin:0}}
-.theme-btn{{cursor:pointer;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);display:inline-flex;align-items:center;gap:6px}}
 </style>""",
     unsafe_allow_html=True,
 )
@@ -216,28 +267,60 @@ def call_backend(strategy, asset, start_date, end_date, capital, params_tuple):
 
 # ── TOPBAR
 meta = st.session_state.get("last_meta", {})
-if meta:
-    status = (
-        f"Last backtest: <strong style='color:var(--text)'>"
-        f"{meta.get('strategy','—')} — {meta.get('asset','—')} "
-        f"{str(meta.get('start_date',''))[:4]}–{str(meta.get('end_date',''))[:4]}"
-        f"</strong> &nbsp;·&nbsp; source: {meta.get('data_source','—')}"
-    )
+_last_result = st.session_state.get("last_result")
+if _last_result is not None:
+    def _pill(label, value):
+        s = f"<span style='display:inline-flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 7px;white-space:nowrap'>"
+        s += f"<span style='color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.07em'>{label}</span>"
+        s += f"&thinsp;<span style='color:var(--text);font-size:11px;font-weight:600'>{value}</span></span>"
+        return s
+    _p = meta.get("params", {})
+    _pills = [
+        _pill("Strategy", meta.get("strategy", "—")),
+        _pill("Asset", meta.get("asset", "—")),
+        _pill("Period", str(meta.get("start_date",""))[:10] + " → " + str(meta.get("end_date",""))[:10]),
+        _pill("Capital", "${:,.0f}".format(meta.get("capital", 0))),
+    ]
+    for k, v in _p.items():
+        _label = k.replace("_", " ").title()
+        _pills.append(_pill(_label, ("{:g}".format(v)) if isinstance(v, float) else str(v)))
+    status_text = " ".join(_pills)
 else:
-    status = "No backtest run yet — configure below and click Run"
+    status_text = "No backtest run yet — configure below and click Run"
+theme_label = "☀ Light" if dark else "🌙 Dark"
 
-top_left, top_right = st.columns([8, 1])
+# Topbar: status on the left, Export + theme toggle on the right
+top_left, top_right = st.columns([7, 3])
+
 with top_left:
     st.markdown(
-        f"""<div class="topbar"><div class="logo">VectorBT <span class="logo-badge">ALPHA</span></div>
-        <div class="run-status"><span class="pulse"></span> {status}</div></div>""",
+        f"""<div class="topbar">
+          <div class="topbar-left">
+            <span class="logo-badge">ALPHA</span>
+            <div class="run-status"><span class="pulse"></span>{status_text}</div>
+          </div>
+        </div>""",
         unsafe_allow_html=True,
     )
+
 with top_right:
-    theme_label = "☀ Light" if dark else "🌙 Dark"
-    if st.button(theme_label, key="theme_toggle"):
-        st.session_state["dark_mode"] = not dark
-        st.rerun()
+    btn_col1, btn_col2 = st.columns([1, 1])
+    with btn_col1:
+        # Dummy Export button — functionality to be wired up when backend is ready
+        st.markdown(
+            """<div style="display:flex;justify-content:flex-end;padding-top:12px">
+              <button class="top-btn export" disabled title="Export (coming soon)">
+                ↓ Export
+              </button>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+    with btn_col2:
+        st.markdown("<div style='padding-top:6px'>", unsafe_allow_html=True)
+        if st.button(theme_label, key="theme_toggle"):
+            st.session_state["dark_mode"] = not dark
+            st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ── FETCH STRATEGIES
 strategies_list, strat_err = fetch_strategies()
@@ -286,7 +369,7 @@ if strategy and strategy != "—":
                 )
 
 # ── RUN BUTTON
-if st.button(" ▶   RUN BACKTEST "):
+if st.button("▶  RUN BACKTEST"):
     with st.spinner("Running backtest on backend…"):
         result, err = call_backend(
             strategy, asset, sd, ed, capital, tuple(sorted(params.items()))
@@ -295,7 +378,16 @@ if st.button(" ▶   RUN BACKTEST "):
         st.markdown(f'<div class="error-box">{err}</div>', unsafe_allow_html=True)
     elif result:
         st.session_state["last_result"] = result
-        st.session_state["last_meta"] = result.get("meta", {})
+        backend_meta = result.get("meta", {})
+        st.session_state["last_meta"] = {
+            "strategy": backend_meta.get("strategy", strategy),
+            "asset": backend_meta.get("asset", asset),
+            "start_date": backend_meta.get("start_date", str(sd)),
+            "end_date": backend_meta.get("end_date", str(ed)),
+            "capital": capital,
+            "params": dict(params),
+        }
+        st.rerun()
 
 st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
 
@@ -423,7 +515,7 @@ if has_data and charts.get("strategy"):
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="DM Mono", color=tick_color, size=9),
+        font=dict(family="Geist, Segoe UI, sans-serif", color=tick_color, size=9),
         margin=dict(l=10, r=10, t=10, b=10),
         height=240,
         legend=dict(
@@ -452,7 +544,7 @@ if has_data and charts.get("strategy"):
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 else:
     st.markdown(
-        "<div style='height:240px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:DM Mono;font-size:12px'>Run a backtest to see the equity curve</div>",
+        "<div style='height:240px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:'Geist','Segoe UI',sans-serif;font-size:12px'>Run a backtest to see the equity curve</div>",
         unsafe_allow_html=True,
     )
 
@@ -475,14 +567,14 @@ with ct:
                 else f"{t['return']*100:.2f}%"
             )
             tag = f"<span class='tag tag-{t['action']}'>{t['action'].upper()}</span>"
-            rows += f"<tr><td>{t['entryDate']}</td><td>{tag}</td><td>${t['entryPrice']:,.2f}</td><td>${t['exitPrice']:,.2f}</td><td class='{pc}'>{rs}</td><td>{t.get('days','—')}d</td></tr>"
+            rows += f"<tr><td>{t['entryDate']}</td><td>{tag}</td><td class='num'>${t['entryPrice']:,.2f}</td><td class='num'>${t['exitPrice']:,.2f}</td><td class='num {pc}'>{rs}</td><td class='num'>{t.get('days','—')}d</td></tr>"
         st.markdown(
-            f"""<div class="card-body"><table class="trade-table"><thead><tr><th>Entry</th><th>Side</th><th>Entry $</th><th>Exit $</th><th>Return</th><th>Hold</th></tr></thead><tbody>{rows}</tbody></table></div>""",
+            f"""<div class="card-body"><table class="trade-table"><thead><tr><th>Entry</th><th>Side</th><th class="num">Entry $</th><th class="num">Exit $</th><th class="num">Return</th><th class="num">Hold</th></tr></thead><tbody>{rows}</tbody></table></div>""",
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
-            "<div class='card-body' style='color:var(--muted);font-family:DM Mono;font-size:12px'>No trade data yet</div>",
+            "<div class='card-body' style='color:var(--muted);font-family:'Geist','Segoe UI',sans-serif;font-size:12px'>No trade data yet</div>",
             unsafe_allow_html=True,
         )
     st.markdown("</div>", unsafe_allow_html=True)
@@ -505,8 +597,8 @@ with cr:
             )
             trows += (
                 f"<tr style='border-bottom:1px solid var(--border)'>"
-                f"<td style='padding:8px 0;font-family:DM Mono;font-size:10px;color:var(--muted)'>{label}</td>"
-                f"<td style='padding:8px 0;font-family:DM Mono;font-size:11px;text-align:right;{color}'>{formatted}</td>"
+                f"<td style='padding:9px 12px 9px 4px;font-family:'Geist','Segoe UI',sans-serif;font-size:10px;color:var(--muted)'>{label}</td>"
+                f"<td style='padding:9px 4px 9px 12px;font-family:'Geist','Segoe UI',sans-serif;font-size:11px;text-align:right;{color}'>{formatted}</td>"
                 f"</tr>"
             )
         st.markdown(
@@ -515,7 +607,7 @@ with cr:
         )
     else:
         st.markdown(
-            "<div class='card-body' style='color:var(--muted);font-family:DM Mono;font-size:12px'>Run a backtest to see metrics</div>",
+            "<div class='card-body' style='color:var(--muted);font-family:'Geist','Segoe UI',sans-serif;font-size:12px'>Run a backtest to see metrics</div>",
             unsafe_allow_html=True,
         )
     st.markdown("</div>", unsafe_allow_html=True)
