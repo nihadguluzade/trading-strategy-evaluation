@@ -12,5 +12,11 @@ COPY pyproject.toml uv.lock ./
 # Sync dependencies (This creates the .venv inside the container)
 RUN uv sync --frozen
 
-# Note: We do not COPY the source code here because docker-compose 
-# will mount it dynamically via volumes.
+# Copy source code (Railway doesn't support volumes, needs actual files)
+COPY . .
+
+# Expose port for Railway
+EXPOSE 8000
+
+# Start the FastAPI application
+CMD ["uv", "run", "uvicorn", "src.engine.main:app", "--host", "0.0.0.0", "--port", "8000"]
